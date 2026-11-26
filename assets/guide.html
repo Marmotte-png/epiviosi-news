@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EPIVÍOSI NEWS</title>
+<style>
+  :root { --bg: #0b1826; --fg: #f1ede4; --accent: #e8b04b; --muted: #7fa6c4; --card: #ffffff0d; --red: #e2574c; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font: 16px/1.55 system-ui, sans-serif; }
+  main { max-width: 50rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
+  h1 { color: var(--accent); letter-spacing: .04em; margin-bottom: .2rem; }
+  h2 { color: var(--accent); border-top: 1px solid #ffffff22; padding-top: 1.2rem; }
+  h3 { margin-bottom: .3rem; }
+  .sub { color: var(--muted); margin-top: 0; }
+  .card { background: var(--card); border-radius: 8px; padding: .2rem 1rem .6rem; margin: .8rem 0; }
+  .urgent { border-left: 4px solid var(--red); }
+  code, kbd { background: #ffffff14; padding: .1em .35em; border-radius: 4px; }
+  a { color: var(--accent); }
+  nav a { margin-right: 1rem; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { text-align: left; padding: .3rem .5rem; border-bottom: 1px solid #ffffff1a; vertical-align: top; }
+  li { margin-bottom: .3rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>EPIVÍOSI NEWS</h1>
+  <p class="sub">Articles et photos chiffrés, sans métadonnées, sans connexion. · Encrypted articles and photos, metadata-free, offline.</p>
+  <nav><a href="#fr">Français</a><a href="#securite">Sécurité terrain</a><a href="#contacts">Contacts</a><a href="#en">English</a></nav>
+
+  <section id="fr" lang="fr">
+  <div class="card urgent">
+  <h3>En cas de danger : verrouiller</h3>
+  <p>Menu → <strong>Verrouiller la rédaction</strong> : le coffre se ferme immédiatement, même si des
+  fichiers sont ouverts (les modifications non enregistrées sont perdues). Éteindre ensuite l'ordinateur
+  efface la mémoire. Sans la phrase de passe, le contenu de la clé est illisible.</p>
+  </div>
+
+  <h2>La rédaction chiffrée</h2>
+  <div class="card">
+  <p>Menu → <strong>Rédaction</strong>. À la première ouverture, choisissez une phrase de passe longue
+  (plusieurs mots). Le coffre chiffré est rangé dans la persistance de la clé ; ouvert, il apparaît
+  dans <code>~/Rédaction</code> :</p>
+  <table>
+    <tr><td><code>Articles/</code></td><td>vos textes</td></tr>
+    <tr><td><code>Photos/Originaux/</code></td><td>fichiers intacts, avec leurs métadonnées, et <code>empreintes.sha256</code></td></tr>
+    <tr><td><code>Photos/Publiables/</code></td><td>copies sans métadonnées, à utiliser pour publier</td></tr>
+    <tr><td><code>Envois/</code></td><td>journal des envois préparés</td></tr>
+    <tr><td><code>Modèles/</code></td><td>article, dépêche, journal de terrain, fiche source ou témoin</td></tr>
+  </table>
+  <p>Ne rangez rien de sensible hors de <code>~/Rédaction</code> : le reste du dossier personnel n'est pas chiffré.</p>
+  </div>
+
+  <h2>Importer des photos</h2>
+  <div class="card">
+  <p>Branchez la carte mémoire, l'appareil ou le téléphone, puis <strong>Rédaction → Importer des photos</strong>
+  (photos, vidéos et sons). Pour chaque fichier :</p>
+  <ul>
+    <li>l'<strong>original</strong> est conservé intact dans le coffre, et son empreinte SHA-256 est notée :
+      elle prouvera plus tard que la photo n'a pas été modifiée (<code>cd ~/Rédaction/Photos/Originaux &amp;&amp; sha256sum -c empreintes.sha256</code>) ;</li>
+    <li>une <strong>copie publiable</strong> est créée sans métadonnées : position GPS, modèle et numéro de
+      série de l'appareil, date et heure, logiciel…</li>
+  </ul>
+  <p>Les formats RAW ne peuvent pas être nettoyés : ils sont seulement conservés en original. Exportez-les
+  en JPEG avant de les publier. Ensuite, <strong>effacez la carte mémoire</strong> si elle risque d'être saisie.</p>
+  </div>
+
+  <h2>Retoucher : flouter visages et plaques</h2>
+  <div class="card">
+  <p><strong>Rédaction → Retoucher une photo</strong> ouvre GIMP. Sélectionnez la zone (rectangle ou
+  ellipse), puis <em>Filtres → Flou → Pixeliser</em> (blocs larges) ou un remplissage noir. Un flou
+  léger peut parfois être inversé : préférez des blocs larges ou un aplat. Pensez aux détails qui
+  identifient : tatouages, vêtements, enseignes, reflets, écrans.</p>
+  <p>Exportez avec <em>Fichier → Exporter</em>. GIMP peut réécrire des métadonnées : l'envoi les retire
+  de toute façon.</p>
+  </div>
+
+  <h2>Préparer un envoi</h2>
+  <div class="card">
+  <p><strong>Rédaction → Préparer un envoi chiffré</strong> : choisissez les fichiers, puis la destination
+  (par exemple une autre clé USB). L'outil :</p>
+  <ol>
+    <li>retire les métadonnées de chaque fichier (photos, vidéos, sons, documents LibreOffice, PDF :
+      auteur, appareil, GPS…), et refuse l'envoi si un fichier ne peut pas être nettoyé ;</li>
+    <li>ajoute <code>SHA256SUMS</code> (empreinte de chaque fichier) et <code>MANIFESTE.txt</code> ;</li>
+    <li>crée une archive <strong>7-Zip chiffrée (AES-256)</strong> dont même les noms de fichiers sont
+      chiffrés, avec son empreinte (<code>.7z.sha256</code>).</li>
+  </ol>
+  <p>Le destinataire l'ouvre avec 7-Zip (Windows), Keka (macOS) ou 7-Zip/p7zip (Linux).
+  <strong>Transmettez la phrase de passe par un autre canal que l'archive</strong> (de vive voix, autre
+  messagerie), et l'empreinte pour qu'il vérifie que l'archive est arrivée intacte.</p>
+  </div>
+
+  <h2>Ligne de commande</h2>
+  <div class="card">
+  <pre><code>epiviosi-news-coffre etat | ouvrir | fermer | fermer --force
+epiviosi-news-import --sujet marche-nord /run/media/$USER/CARTE_SD
+echo 'phrase' | epiviosi-news-envoi --dest /run/media/$USER/CLE ~/Rédaction/Articles/texte.odt ~/Rédaction/Photos/Publiables/2026-11-26_marche-nord</code></pre>
+  </div>
+  </section>
+
+  <section id="securite" lang="fr">
+  <h2>Sécurité terrain</h2>
+  <div class="card">
+  <h3>Numérique</h3>
+  <ul>
+    <li>Verrouillez la rédaction dès que vous ne travaillez plus ; éteignez l'ordinateur avant un point de contrôle.</li>
+    <li>Une phrase de passe que vous retenez, jamais notée sur vous. Sous la contrainte, ne mettez pas votre vie en danger pour des fichiers.</li>
+    <li>Faites des copies : un <strong>envoi chiffré vers une deuxième clé</strong> rangée ailleurs vaut sauvegarde.</li>
+    <li>Ne publiez que depuis <code>Photos/Publiables</code> ou un envoi : les originaux contiennent la position GPS.</li>
+    <li>Coupez la localisation et les sauvegardes en ligne du téléphone qui sert d'appareil photo.</li>
+    <li>EPIVÍOSI fonctionne hors-ligne : branchez-le au réseau le moins possible, et jamais sur un réseau que vous ne connaissez pas pour envoyer un fichier sensible.</li>
+  </ul>
+  <h3>Sources</h3>
+  <ul>
+    <li>Pseudonymes partout (notes, noms de fichiers, articles) ; l'identité réelle, si elle doit être notée, seulement dans la fiche source, dans le coffre.</li>
+    <li>Recueillez le consentement : citation, visage, voix, nom (modèle « fiche source »).</li>
+    <li>Un détail peut suffire à identifier quelqu'un : lieu précis, heure, voix, vêtements, arrière-plan.</li>
+  </ul>
+  <h3>Physique</h3>
+  <ul>
+    <li>Plan de communication : un contact qui connaît votre itinéraire, des heures de rappel, une procédure s'il n'a pas de nouvelles.</li>
+    <li>Signes « PRESS » : utiles ou dangereux selon le contexte ; renseignez-vous localement.</li>
+    <li>Formation aux premiers secours en milieu hostile, trousse individuelle : voir EPIVÍOSI MEDIC.</li>
+  </ul>
+  </div>
+  </section>
+
+  <section id="contacts" lang="fr">
+  <h2>Contacts et ressources</h2>
+  <div class="card">
+  <p>Vérifiez ces contacts et notez les numéros d'urgence à jour <strong>avant le départ</strong>.</p>
+  <table>
+    <tr><th>Organisation</th><th>Pour</th><th>Contact</th></tr>
+    <tr><td>Reporters sans frontières (RSF)</td><td>Assistance aux journalistes en danger</td><td><code>assistance@rsf.org</code> · rsf.org</td></tr>
+    <tr><td>Committee to Protect Journalists (CPJ)</td><td>Urgences, aide juridique et médicale</td><td><code>emergencies@cpj.org</code> · cpj.org</td></tr>
+    <tr><td>Access Now</td><td>Ligne d'assistance sécurité numérique, 24 h/24</td><td><code>help@accessnow.org</code></td></tr>
+    <tr><td>Comité international de la Croix-Rouge (CICR)</td><td>Ligne d'urgence pour journalistes en mission dangereuse (disparition, détention)</td><td>numéro sur icrc.org</td></tr>
+  </table>
+  <p>Guides à lire avant le départ : <em>Digital and Physical Safety Kit</em> (CPJ),
+  <em>Guide pratique de sécurité des journalistes</em> (RSF et UNESCO).</p>
+  </div>
+  </section>
+
+  <section id="en" lang="en">
+  <h2>English</h2>
+  <div class="card">
+  <ul>
+    <li><strong>Emergency:</strong> menu → <em>Verrouiller la rédaction</em> locks the encrypted vault at once.</li>
+    <li><strong>Rédaction</strong> (menu): encrypted vault in the stick's persistence, opened in <code>~/Rédaction</code>
+      with a passphrase; article, dispatch, field log and source templates.</li>
+    <li><strong>Import photos</strong>: the untouched original is kept with its SHA-256 fingerprint; a copy without
+      metadata (GPS, camera, date) goes to <code>Photos/Publiables</code>.</li>
+    <li><strong>Retouch</strong> with GIMP: pixelate faces and number plates with large blocks.</li>
+    <li><strong>Prepare a transfer</strong>: metadata stripped, checksums added, AES-256 encrypted 7-Zip archive
+      (file names encrypted too). Send the passphrase through another channel.</li>
+  </ul>
+  <p>Firefox can translate this page (translation icon in the address bar), offline.</p>
+  </div>
+  </section>
+</main>
+</body>
+</html>
